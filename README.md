@@ -13,11 +13,11 @@ TODO
 # create python virtual env and install pip dependencies, after that reload VS Code
 $ make install
 
-# train taxi model
-$ make train-taxi
+# train taxi model, make sure that you are using virtual env
+(.env) $ make train-taxi
 
 # run taxi demo
-$ make demo-taxi
+(.env) $ make demo-taxi
 ```
 
 ## References
