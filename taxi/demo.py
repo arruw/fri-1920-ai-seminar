@@ -3,36 +3,14 @@ import numpy as np
 import random
 from IPython.display import clear_output
 from time import sleep
+from solve import solve
 
 env = gym.make("Taxi-v2").env
 q_table = np.load(".tmp/taxi/q_table.npy")
 
-env.s = 328  # set environment to illustration's state
+# env.s = 328  # set environment to illustration's state
 
-epochs = 0
-penalties, reward = 0, 0
-
-frames = [] # for animation
-
-done = False
-
-while not done:
-    action = env.action_space.sample()
-    state, reward, done, info = env.step(action)
-
-    if reward == -10:
-        penalties += 1
-    
-    # Put each rendered frame into dict for animation
-    frames.append({
-        'frame': env.render(mode='ansi'),
-        'state': state,
-        'action': action,
-        'reward': reward
-        }
-    )
-
-    epochs += 1
+epochs, penalties, _, _, frames = solve(env, q_table)
     
     
 print("Timesteps taken: {}".format(epochs))
