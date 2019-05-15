@@ -22,4 +22,6 @@ $ make install
 
 ## References
 
-TODO
+- [Deep Q-Learning with Keras and Gym](https://keon.io/deep-q-learning/) (Accessed on: 15. May 2019)
+
+- [Data science - Coding Cheatsheets](https://elitedatascience.com/vault) (Accessed on 15. May 2019)
