@@ -10,9 +10,9 @@ q_table = np.load(".tmp/taxi/q_table.npy")
 
 # env.s = 328  # set environment to illustration's state
 
-epochs, penalties, _, _, frames = solve(env, q_table)
-    
-    
+epochs, penalties, _, _, frames = solve(env, q_table, epsilon = 0)
+
+
 print("Timesteps taken: {}".format(epochs))
 print("Penalties incurred: {}".format(penalties))
 
