@@ -28,6 +28,7 @@ def QLearning(env, learning, discount, epsilon, min_eps, episodes):
     # Track rewards
     reward_list = []
     avg_reward_list = []
+    best_reward_list = []
     
     # Calculate episodic reduction in epsilon
     reduction = (epsilon - min_eps)/episodes
@@ -66,11 +67,9 @@ def QLearning(env, learning, discount, epsilon, min_eps, episodes):
                 Q[state1[0], state1[1], action] = reward
                 
             # Adjust Q value for current state
-            # new_value = (1 - alpha) * old_value + alpha * (reward + gamma * next_max)
             else:
-                delta = learning*(reward + 
-                                 discount*np.max(Q[state2[0], 
-                                                   state2[1]]) - 
+                # lr * (reward + gamma * np.max(Q[new_state, :]) — Q[state, action]
+                delta = learning*(reward+discount*np.max(Q[state2[0],state2[1]]) - 
                                  Q[state1[0], state1[1],action])
                 Q[state1[0], state1[1],action] += delta
                                      
@@ -78,7 +77,7 @@ def QLearning(env, learning, discount, epsilon, min_eps, episodes):
             total_reward += reward
             state1 = state2
         
-        # Decay epsilon
+        # Reduce epsilon over time
         if epsilon > min_eps:
             epsilon -= reduction
         
@@ -87,27 +86,45 @@ def QLearning(env, learning, discount, epsilon, min_eps, episodes):
         
         if (i+1) % 100 == 0:
             avg_reward = np.mean(reward_list)
+            max_reward = np.max(reward_list)
             avg_reward_list.append(avg_reward)
-            print("Episode ", i+1, "\nAverage Reward: ", avg_reward, "\nBest reward: ", np.max(reward_list),"\n-----------")
+            best_reward_list.append(max_reward)
+            print("Episode ", i+1, "\nAverage Reward: ", avg_reward, "\nBest reward: ", max_reward,"\n-----------")
             reward_list = []
             
     env.close()
     
-    return avg_reward_list
+    return avg_reward_list, best_reward_list
 
 # Run Q-learning algorithm
+# Epsilon - how much we want to explore rate
 # env, learning rate, discount rate, epsilon, min_eps, episodes):
 # TODO: Loop through different parameters, plot results
 # Learning rate 0.05, 0.1, 0.2, etc.
-rewards = QLearning(env, 0.1, 0.9, 0.8, 0, 5000)
+learning_rates = [0.05, 0.1, 0.2]
+discount_rates = [0.8, 0.9]
+exploration_rates = [0.2, 0.8]
 
-# Plot average rewards over time
-plt.plot(100*(np.arange(len(rewards)) + 1), rewards)
-plt.xlabel('Episode')
-plt.ylabel('AVG Reward')
-plt.title('Average reward with episodes')
-plt.savefig('rewards.jpg')     
-plt.close()    
+for learning_rate in learning_rates:
+    for discount_rate in discount_rates:
+        for exploration_rate in exploration_rates:
+            rewards, best_rewards = QLearning(env, learning_rate, discount_rate, exploration_rate, 0, 5000)
+            
+            # TODO: Plot differences when applying different learning rate, discount rate etc.
+            # TODO: Different Epsilon values yield different results....debate EXPLOITATION vs EXPLORATION
+            # Plot average rewards over time
+            plt.plot(100*(np.arange(len(rewards)) + 1), rewards)
+            plt.xlabel('Episode')
+            plt.ylabel('AVG Reward')
+            plt.title('Average reward with episodes')
+            plt.savefig('./plots/lr_'+str(learning_rate)+'_dr_'+str(discount_rate)
+                +'_er_'+str(exploration_rate)+'.jpg')     
+            plt.close() 
 
-# TODO: Plot best reward over time
-# TODO: Plot differences when applying different learning rate, discount rate etc.
+            # Plot best rewards over time
+            # plt.plot(100*(np.arange(len(best_rewards)) + 1), best_rewards)
+            # plt.xlabel('Episode')
+            # plt.ylabel('Best Reward')
+            # plt.title('Best reward with episodes')
+            # plt.savefig('./plots/best_rewards_'+str(learning_rate)+'.jpg')     
+            # plt.close() 
