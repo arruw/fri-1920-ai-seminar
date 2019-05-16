@@ -4,6 +4,7 @@ from collections import deque
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
+from keras.models import load_model
 
 class DQNAgent:
 
@@ -54,7 +55,7 @@ class DQNAgent:
             self._epsilon *= self._epsilon_decay
 
     def load(self, name):
-        self._model.load_weights(name)
+        self._model = load_model(name)
 
     def save(self, name):
-        self._model.save_weights(name)
+        self._model.save(name)

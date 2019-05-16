@@ -3,9 +3,10 @@ import numpy as np
 from DQNAgent import DQNAgent
 
 # initialize gym environment and the agent
-env = gym.make('CartPole-v0')
+env = gym.make('CartPole-v1')
 agent = DQNAgent(env.observation_space.shape[0], env.action_space.n)
 episodes = 10000
+master_level = 0
 # Iterate the game
 for e in range(episodes):
     # reset state in the beginning of each game
@@ -31,11 +32,19 @@ for e in range(episodes):
         # ex) The agent drops the pole
         if done:
             # print the score and break out of the loop
-            print("episode: {}/{}, score: {}"
-                    .format(e, episodes, time_t))
+            print("episode: {}/{}, score: {}".format(e, episodes, time_t))
+
+            if time_t >= 490:
+                master_level+=1
+            else:
+                master_level = 0
+
             break
     # train the agent with the experience of the episode
     agent.replay(32)
+
+    if master_level > 50:
+        break
 
 env.close()
 agent.save('.tmp/cartpole-dqn/model.h5')
